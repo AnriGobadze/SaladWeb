@@ -273,7 +273,7 @@ body {
 .hero__thumb--4 { top: 81%; left: 45%; }
 
 /* decorative arc and dots */
-.decorative__arc {
+.decorative__arc, .decorative__dot  {
     position: absolute;
     width: 1.5px;
     height: 20px;
