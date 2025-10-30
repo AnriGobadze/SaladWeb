@@ -99,6 +99,33 @@ body {
     border: 2px solid var(--bg-white);
 }
 
+/* Animation for cart icon when item is added */
+.site-header__cart.pop-animation {
+    animation: pop 0.3s ease-in-out;
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+}
+
+/* Hide cart badge by default, JS will show it */
+.site-header__cart-badge {
+    display: none;
+    /* Add this for smoother number changes */
+    font-size: 10px;
+    padding: 3px;
+    width: auto;
+    min-width: 10px;
+    height: auto;
+    min-height: 10px;
+    line-height: 1;
+    text-align: center;
+    top: -8px;
+    right: -10px;
+}
+
 /* Hero main layout */
 .hero__main {
     display: flex;
