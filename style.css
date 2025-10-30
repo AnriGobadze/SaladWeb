@@ -53,11 +53,11 @@ body {
 .site-logo__initial { color: var(--text-dark); }
 
 .site-logo__name {
-    font-family: 'Lobster', cursive;
+    font-family: 'Pacifico', cursive;
     color: var(--text-red);
-    font-weight: 400;
-    margin-left: -5px;
+    font-weight: 400; 
 }
+
 
 .site-nav {
     display: flex;
