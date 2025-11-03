@@ -21,6 +21,16 @@
         <div class="container">
 
             <header class="site-header">
+
+
+                
+                <button class="burger-menu" aria-label="Toggle menu">
+    <span></span>
+    <span></span>
+    <span></span>
+
+</button>
+
                 <div class="site-logo">
                     <span class="site-logo__name">Salad</span>
                 </div>
@@ -33,7 +43,7 @@
                 </nav>
 
                 <div class="site-header__actions">
-                    <i class="site-header__icon fa-solid fa-magnifying-glass"></i>
+                    
 
                     <div class="site-header__cart">
                         <i class="fa-solid fa-bag-shopping"></i>
@@ -42,8 +52,19 @@
                 </div>
             </header>
 
+<div class="mobile-nav-overlay">
+    <nav class="mobile-nav">
+        <a href="#" class="mobile-nav__link">Home</a>
+        <a href="#" class="mobile-nav__link">Shop</a>
+        <a href="#" class="mobile-nav__link">Recipy</a>
+        <a href="#" class="mobile-nav__link">Contact</a>
+    </nav>
+</div>
+
+
             <main class="hero__main">
                 <div class="hero__content">
+                    
                     <h1 class="hero__title">Healthy Salad</h1>
                     <p class="hero__price">$24.00</p>
 
@@ -63,8 +84,7 @@
 
                     <div class="hero__pagination">
                         <div class="hero__line"></div>
-                        <a href="#" class="hero__page-link">Previous</a>
-                        <a href="#" class="hero__page-link">Next</a>
+                       
                         <div class="hero__line"></div>
                     </div>
 
@@ -75,12 +95,25 @@
                 </div>
 
                 <aside class="hero__visual">
+                     
                     <div class="hero__plate">
                         <img
                             src="https://www.howsweeteats.com/wp-content/uploads/2023/09/chickpea-salad-bowl-6.jpg"
                             alt="A large white bowl filled with a vibrant healthy salad."
                             class="hero__image"
                         />
+                        
+                        <img 
+                        src="https://www.eatingwell.com/thmb/CcLY-9Ru3OWpd5k_V-hoxlk4whg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/chopped-power-salad-with-chicken-hero-1x1-0178-475bbf1bbd884d5d97fc236b8975dff2.jpg" 
+                        alt="A white bowl healthy salad"
+                        class="hero__image"
+                        >
+
+                        <img
+                         src="https://feelgoodfoodie.net/wp-content/uploads/2019/08/Cauliflower-Tabbouleh-8.jpg" 
+                         alt="A large white healthy salad"
+                         class="hero__image"
+                         >
                     </div>
 
                     <div class="hero__thumb hero__thumb--1">
@@ -159,7 +192,7 @@
 
                 <div class="feature__image-wrap">
                     <div class="feature__image-container">
-                        <img src="https://www.howsweeteats.com/wp-content/uploads/2023/09/chickpea-salad-bowl-6.jpg" alt="A healthy salad in a round white bowl with grilled salmon." />
+                        <img src="https://www.howsweeteats.com/wp-content/uploads/2023/09/chickpea-salad-bowl-6.jpg" alt="A healthy salad in a round white bowl with grilled salmon."  />
                     </div>
                 </div>
             </main>
@@ -329,6 +362,12 @@
             </div>
         </div>
 
+<!-- Toast Notification -->
+<div id="toast" class="toast">Product added successfully!</div>
+
+
+
+
         <div class="site-footer__bottom">
             <div class="site-footer__inner">
                 <span>© 2023 Designed by uiuxzaid</span>
@@ -340,6 +379,43 @@
             </div>
         </div>
     </footer>
+   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/MotionPathPlugin.min.js"></script> <!-- ADD THIS LINE -->
+
+
 <script src="script.js"></script>
+
+<div id="cart-modal" class="cart-modal">
+    <div class="cart-modal-content">
+        <div class="cart-modal-header">
+            <h2><i class="fa-solid fa-bag-shopping"></i> Your Cart</h2>
+            <button class="cart-modal-close" onclick="hideCartModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        
+        <div id="empty-cart-message" class="empty-cart-message">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <p>Your cart is empty</p>
+        </div>
+        
+        <div id="cart-items" class="cart-items"></div>
+        
+        <div id="cart-total" class="cart-total">
+            <div class="cart-total-row">
+                <span>Total:</span>
+                <span id="cart-total-amount">$0.00</span>
+            </div>
+            <button class="button button--primary cart-checkout">
+                <i class="fa-solid fa-credit-card"></i> Checkout
+            </button>
+            <button class="button cart-clear" onclick="clearCart()">
+                <i class="fa-solid fa-trash"></i> Clear Cart
+            </button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
