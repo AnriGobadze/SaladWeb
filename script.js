@@ -137,14 +137,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p>${item.price.toFixed(2)} × ${item.quantity}</p>
                 </div>
                 <div class="cart-item-actions">
-                    <span class="cart-item-total">${itemTotal.toFixed(2)}</span>
+                    <span class="cart-item-total">$${itemTotal.toFixed(2)}</span>
                     <button class="cart-item-remove" data-index="${index}"><i class="fa-solid fa-trash"></i></button>
                 </div>
             `;
             cartItemsContainer.appendChild(div);
         });
 
-        document.getElementById('cart-total-amount').textContent = total.toFixed(2);
+        document.getElementById('cart-total-amount').textContent = `$${total.toFixed(2)}`;
 
         document.querySelectorAll('.cart-item-remove').forEach(btn=>{
             btn.addEventListener('click', e=>{
@@ -173,12 +173,14 @@ document.addEventListener('DOMContentLoaded', () => {
             showFullScreenToast('Your cart is empty!');
             return;
         }
-        window.location.href = 'checkout.html';
+        // For demonstration. In a real app, this would lead to a checkout page.
+        showFullScreenToast('Redirecting to checkout!');
+        hideCartModal();
     });
 
     // Clear cart
     window.clearCart = () => {
-        if(confirm('Are you sure you want to clear your cart?')){
+        if(cart.length > 0 && confirm('Are you sure you want to clear your cart?')){
             cart = [];
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCartBadge();
@@ -200,136 +202,130 @@ document.addEventListener('DOMContentLoaded', () => {
         val++;
         quantityValue.textContent = val.toString().padStart(2,'0');
     });
+    
+    // =================== BURGER MENU ===================
+    const burgerMenu = document.querySelector('.burger-menu');
+    const mobileNavOverlay = document.querySelector('.mobile-nav-overlay');
+
+    burgerMenu.addEventListener('click', () => {
+        burgerMenu.classList.toggle('active');
+        mobileNavOverlay.classList.toggle('active');
+        // Prevent body scrolling when mobile nav is open
+        document.body.style.overflow = mobileNavOverlay.classList.contains('active') ? 'hidden' : '';
+    });
+    
+    function closeMobileNav() {
+        burgerMenu.classList.remove('active');
+        mobileNavOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
 
     // =================== HERO & MENU GSAP ANIMATIONS ===================
-// === START: CORRECTED HERO IMAGE CAROUSEL LOGIC ===
+    const heroImages = gsap.utils.toArray('.hero__image');
+    gsap.set(heroImages, { x: 300, opacity: 0 });
+    gsap.set(heroImages[0], { x: 300, opacity: 0 });
 
-// 1. Select all the images
-const heroImages = gsap.utils.toArray('.hero__image');
+    const imageCarouselTimeline = gsap.timeline({ repeat: -1 });
 
-// 2. Set their initial off-screen state
-gsap.set(heroImages, {
-    x: 300,
-    opacity: 0
-});
-// Set the first image to be ready to animate in
-gsap.set(heroImages[0], { x: 300, opacity: 0 });
+    heroImages.forEach(image => {
+        imageCarouselTimeline
+            .to(image, { x: 0, opacity: 1, duration: 1.2, ease: 'power3.out' })
+            .to(image, { x: 300, opacity: 0, duration: 1.2, ease: 'power3.in' }, "+=3");
+    });
 
-// 3. Create the master timeline that loops infinitely
-const imageCarouselTimeline = gsap.timeline({
-    repeat: -1, // Infinite loop
-});
-
-// 4. Add an animation sequence for EACH image to the timeline
-heroImages.forEach(image => {
-    imageCarouselTimeline
-        // Slide the image in smoothly
-        .to(image, {
-            x: 0,
-            opacity: 1,
-            duration: 1.2,
-            ease: 'power3.out',
-        })
-        // THEN, slide the image out, but START this animation 3 seconds AFTER the previous one finishes.
-        // This creates the 3-second visible pause you wanted.
-        .to(image, {
-            x: 300,
-            opacity: 0,
-            duration: 1.2,
-            ease: 'power3.in',
-        }, "+=3"); // <--- THIS is the corrected way to create a delay
-});
-
-// 5. Use ScrollTrigger to play/pause the animation based on viewport visibility
-// This part remains the same, as its logic was already correct.
-ScrollTrigger.create({
-    trigger: '.hero',
-    animation: imageCarouselTimeline,
-    start: 'top 80%',
-    end: 'bottom 20%',
-    toggleActions: 'play pause resume pause',
-});
-
-// === END: CORRECTED HERO IMAGE CAROUSEL LOGIC ===
-
+    ScrollTrigger.create({
+        trigger: '.hero',
+        animation: imageCarouselTimeline,
+        start: 'top 80%',
+        end: 'bottom 20%',
+        toggleActions: 'play pause resume pause',
+    });
 
     gsap.utils.toArray('.feature__text, .feature__image-wrap').forEach(el => {
         gsap.from(el, {
-            scrollTrigger: {
-                trigger: el,
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
-            },
-            y: 80,
-            opacity: 0,
-            duration: 1,
-            ease: 'power3.out'
+            scrollTrigger: { trigger: el, start: 'top 80%', toggleActions: 'play none none reverse' },
+            y: 80, opacity: 0, duration: 1, ease: 'power3.out'
         });
     });
 
     gsap.utils.toArray('.menu__card').forEach(card => {
         gsap.from(card, {
-            scrollTrigger: {
-                trigger: card,
-                start: 'top 85%',
-                toggleActions: 'play none none reverse'
-            },
-            y: 100,
-            opacity: 0,
-            duration: 1,
-            ease: 'power3.out'
+            scrollTrigger: { trigger: card, start: 'top 85%', toggleActions: 'play none none reverse' },
+            y: 100, opacity: 0, duration: 1, ease: 'power3.out'
         });
     });
 
     gsap.from('.site-footer', {
-        scrollTrigger: {
-            trigger: '.site-footer',
-            start: 'top 90%'
-        },
-        y: 80,
-        opacity: 0,
-        duration: 1.2,
-        ease: 'power2.out'
+        scrollTrigger: { trigger: '.site-footer', start: 'top 90%' },
+        y: 80, opacity: 0, duration: 1.2, ease: 'power2.out'
+    });
+
+
+    // ======================================================= //
+    // ===== NEW: CONTACT LINK SMOOTH SCROLL FUNCTIONALITY ===== //
+    // ======================================================= //
+    
+    document.querySelectorAll('.nav-contact-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault(); // Stop the default anchor link behavior
+
+            const targetId = this.getAttribute('href'); // Get the href value (e.g., "#contact-section")
+            const targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth', // This creates the smooth scroll effect
+                    block: 'start'
+                });
+            }
+
+            // If the mobile navigation is open, close it
+            if (mobileNavOverlay.classList.contains('active')) {
+                closeMobileNav();
+            }
+        });
+    });
+
+
+    // ================================================== //
+    // ===== NEW: SALAD MENU FILTERING FUNCTIONALITY ===== //
+    // ================================================== //
+
+    const filterItems = document.querySelectorAll('.menu__filter-item');
+    const menuCards = document.querySelectorAll('.menu__card');
+
+    filterItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // 1. Update active state for the clicked filter button
+            filterItems.forEach(i => i.classList.remove('menu__filter-item--active'));
+            this.classList.add('menu__filter-item--active');
+
+            const filterValue = this.getAttribute('data-filter');
+
+            // 2. Filter the cards with animation
+            menuCards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                const shouldBeVisible = filterValue === 'all' || filterValue === cardCategory;
+                
+                // Check if the card's visibility needs to change
+                const isCurrentlyVisible = card.style.display !== 'none';
+
+                if (shouldBeVisible && !isCurrentlyVisible) {
+                    // Make it visible with a fade-in animation
+                    card.style.display = 'flex'; // Use 'flex' since cards are flex containers
+                    card.style.animation = 'fadeInUp 0.5s ease forwards';
+                } else if (!shouldBeVisible && isCurrentlyVisible) {
+                    // Hide it with a fade-out animation
+                    card.style.animation = 'fadeOut 0.4s ease forwards';
+                    // After the animation, set display to none
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 400); // Must match animation duration
+                }
+            });
+        });
     });
 
 }); // DOMContentLoaded end
-
-
-// =================== FULLSCREEN TOAST ===================
-function showFullScreenToast(message) {
-    let toast = document.createElement('div');
-    toast.className = 'fullscreen-toast';
-    toast.innerHTML = `<div>${message}</div>`;
-    document.body.appendChild(toast);
-
-    gsap.fromTo(toast, {opacity:0, scale:0.5, y:-50}, {opacity:1, scale:1, y:0, duration:0.6, ease:'back.out(1.7)'});
-    setTimeout(() => {
-        gsap.to(toast, {opacity:0, scale:0.5, duration:0.5, ease:'back.in(1.7)', onComplete: () => toast.remove() });
-    }, 2000);
-}
-
-// Patch your existing addToCart calls to use the toast
-function addToCart(name, price, quantity=1){
-    const existing = cart.find(i=>i.name===name);
-    if(existing) existing.quantity += quantity;
-    else cart.push({name, price, quantity});
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartBadge();
-    showFullScreenToast(`${quantity} x ${name} added to cart!`);
-}
-
-// =================== SALAD SORTING ===================
-document.querySelectorAll('.menu__filter').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-        const type = btn.dataset.type;
-        document.querySelectorAll('.menu__card').forEach(card=>{
-            card.style.display = type==='all' || card.dataset.type===type ? 'block' : 'none';
-        });
-    });
-});
-
-// =================== REMOVE UNUSED BUTTONS ===================
-// Example: delete any button with class 'unused' (adjust according to your HTML)
-document.querySelectorAll('.unused').forEach(btn => btn.remove());
-
-

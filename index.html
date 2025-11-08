@@ -21,15 +21,11 @@
         <div class="container">
 
             <header class="site-header">
-
-
-                
                 <button class="burger-menu" aria-label="Toggle menu">
-    <span></span>
-    <span></span>
-    <span></span>
-
-</button>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
 
                 <div class="site-logo">
                     <span class="site-logo__name">Salad</span>
@@ -39,12 +35,10 @@
                     <a href="#">Home</a>
                     <a href="#">Shop</a>
                     <a href="#">Recipy</a>
-                    <a href="#">Contact</a>
+                    <a href="#contact-section" class="nav-contact-link">Contact</a>
                 </nav>
 
                 <div class="site-header__actions">
-                    
-
                     <div class="site-header__cart">
                         <i class="fa-solid fa-bag-shopping"></i>
                         <div class="site-header__cart-badge"></div>
@@ -52,14 +46,14 @@
                 </div>
             </header>
 
-<div class="mobile-nav-overlay">
-    <nav class="mobile-nav">
-        <a href="#" class="mobile-nav__link">Home</a>
-        <a href="#" class="mobile-nav__link">Shop</a>
-        <a href="#" class="mobile-nav__link">Recipy</a>
-        <a href="#" class="mobile-nav__link">Contact</a>
-    </nav>
-</div>
+            <div class="mobile-nav-overlay">
+                <nav class="mobile-nav">
+                    <a href="#" class="mobile-nav__link">Home</a>
+                    <a href="#" class="mobile-nav__link">Shop</a>
+                    <a href="#" class="mobile-nav__link">Recipy</a>
+                    <a href="#contact-section" class="mobile-nav__link nav-contact-link">Contact</a>
+                </nav>
+            </div>
 
 
             <main class="hero__main">
@@ -211,21 +205,20 @@
 
             <div class="menu__filters">
                 <ul class="menu__filters-list">
-                    <li class="menu__filter-item menu__filter-item--active"><a href="#">All</a></li>
-                    <li class="menu__filter-item"><a href="#">Veg Salad</a></li>
-                    <li class="menu__filter-item"><a href="#">Non Veg Salad</a></li>
-                    <li class="menu__filter-item"><a href="#">Spicy Salad</a></li>
-                    <li class="menu__filter-item"><a href="#">Fruit Salad</a></li>
+                    <li class="menu__filter-item menu__filter-item--active" data-filter="all"><a href="#">All</a></li>
+                    <li class="menu__filter-item" data-filter="veg"><a href="#">Veg Salad</a></li>
+                    <li class="menu__filter-item" data-filter="non-veg"><a href="#">Non Veg Salad</a></li>
+                    <li class="menu__filter-item" data-filter="spicy"><a href="#">Spicy Salad</a></li>
+                    <li class="menu__filter-item" data-filter="fruit"><a href="#">Fruit Salad</a></li>
                 </ul>
             </div>
 
             <div class="menu__grid">
-                <article class="menu__card">
+                <article class="menu__card" data-category="veg">
                     <img src="https://images.themodernproper.com/production/posts/2020/QuinoaBowl_5.jpg?w=1200&q=82&auto=format&fit=crop&dm=1737605550&s=1fc2ed4da75d63e8279dd2347d07bf28" alt="Paneer salad." class="menu__card-image" />
 
                     <div class="menu__card-header">
                         <h3 class="menu__card-title">Paneer Salad</h3>
-
                         <div class="menu__card-rating">
                             <i class="rating__star fa-solid fa-star"></i>
                             <span class="rating__value">4.6</span>
@@ -236,7 +229,6 @@
 
                     <div class="menu__card-footer">
                         <span class="menu__card-price">$15</span>
-
                         <button class="button button--secondary menu__card-action">
                             <i class="fa-solid fa-cart-plus"></i>
                             <span>Add to cart</span>
@@ -244,23 +236,20 @@
                     </div>
                 </article>
 
-                <article class="menu__card">
+                <article class="menu__card" data-category="veg">
                     <img src="https://images.themodernproper.com/production/posts/2020/QuinoaBowl_5.jpg?w=1200&q=82&auto=format&fit=crop&dm=1737605550&s=1fc2ed4da75d63e8279dd2347d07bf28" alt="Cabbage salad." class="menu__card-image" />
 
                     <div class="menu__card-header">
                         <h3 class="menu__card-title">Cabbage Salad</h3>
-
                         <div class="menu__card-rating">
                             <i class="rating__star fa-solid fa-star"></i>
                             <span class="rating__value">4.2</span>
                         </div>
                     </div>
-
                     <p class="menu__card-desc">Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem quos quas ab eveniet ipsa similique!</p>
 
                     <div class="menu__card-footer">
                         <span class="menu__card-price">$5</span>
-
                         <button class="button button--secondary menu__card-action">
                             <i class="fa-solid fa-cart-plus"></i>
                             <span>Add to cart</span>
@@ -268,23 +257,18 @@
                     </div>
                 </article>
 
-                <article class="menu__card">
+                <article class="menu__card" data-category="spicy">
                     <img src="https://images.themodernproper.com/production/posts/2020/QuinoaBowl_5.jpg?w=1200&q=82&auto=format&fit=crop&dm=1737605550&s=1fc2ed4da75d63e8279dd2347d07bf28" alt="Crunchy salad." class="menu__card-image" />
-
                     <div class="menu__card-header">
                         <h3 class="menu__card-title">Crunchy Salad</h3>
-
                         <div class="menu__card-rating">
                             <i class="rating__star fa-solid fa-star"></i>
                             <span class="rating__value">4.5</span>
                         </div>
                     </div>
-
                     <p class="menu__card-desc">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat at numquam voluptatibus expedita, quod aut.</p>
-
                     <div class="menu__card-footer">
                         <span class="menu__card-price">$10</span>
-
                         <button class="button button--secondary menu__card-action">
                             <i class="fa-solid fa-cart-plus"></i>
                             <span>Add to cart</span>
@@ -292,23 +276,18 @@
                     </div>
                 </article>
 
-                <article class="menu__card">
+                <article class="menu__card" data-category="non-veg">
                     <img src="https://images.themodernproper.com/production/posts/2020/QuinoaBowl_5.jpg?w=1200&q=82&auto=format&fit=crop&dm=1737605550&s=1fc2ed4da75d63e8279dd2347d07bf28" alt="Non veg salad." class="menu__card-image" />
-
                     <div class="menu__card-header">
                         <h3 class="menu__card-title">Non Veg Salad</h3>
-
                         <div class="menu__card-rating">
                             <i class="rating__star fa-solid fa-star"></i>
                             <span class="rating__value">4.8</span>
                         </div>
                     </div>
-
                     <p class="menu__card-desc">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat at numquam voluptatibus expedita, quod aut.</p>
-
                     <div class="menu__card-footer">
                         <span class="menu__card-price">$15</span>
-
                         <button class="button button--secondary menu__card-action">
                             <i class="fa-solid fa-cart-plus"></i>
                             <span>Add to cart</span>
@@ -326,7 +305,7 @@
     <!-- ======================================================= -->
     <!-- SITE FOOTER (kept content — renamed classes)           -->
     <!-- ======================================================= -->
-    <footer class="site-footer">
+    <footer class="site-footer" id="contact-section">
         <div class="site-footer__inner">
             <div class="site-footer__content">
                 <div class="site-footer__col">
@@ -362,11 +341,8 @@
             </div>
         </div>
 
-<!-- Toast Notification -->
-<div id="toast" class="toast">Product added successfully!</div>
-
-
-
+        <!-- Toast Notification -->
+        <div id="toast" class="toast">Product added successfully!</div>
 
         <div class="site-footer__bottom">
             <div class="site-footer__inner">
@@ -379,43 +355,42 @@
             </div>
         </div>
     </footer>
+
    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/MotionPathPlugin.min.js"></script> <!-- ADD THIS LINE -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/MotionPathPlugin.min.js"></script>
+    <script src="script.js"></script>
 
-
-<script src="script.js"></script>
-
-<div id="cart-modal" class="cart-modal">
-    <div class="cart-modal-content">
-        <div class="cart-modal-header">
-            <h2><i class="fa-solid fa-bag-shopping"></i> Your Cart</h2>
-            <button class="cart-modal-close" onclick="hideCartModal()">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        
-        <div id="empty-cart-message" class="empty-cart-message">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <p>Your cart is empty</p>
-        </div>
-        
-        <div id="cart-items" class="cart-items"></div>
-        
-        <div id="cart-total" class="cart-total">
-            <div class="cart-total-row">
-                <span>Total:</span>
-                <span id="cart-total-amount">$0.00</span>
+    <div id="cart-modal" class="cart-modal">
+        <div class="cart-modal-content">
+            <div class="cart-modal-header">
+                <h2><i class="fa-solid fa-bag-shopping"></i> Your Cart</h2>
+                <button class="cart-modal-close" onclick="hideCartModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-            <button class="button button--primary cart-checkout">
-                <i class="fa-solid fa-credit-card"></i> Checkout
-            </button>
-            <button class="button cart-clear" onclick="clearCart()">
-                <i class="fa-solid fa-trash"></i> Clear Cart
-            </button>
+            
+            <div id="empty-cart-message" class="empty-cart-message">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <p>Your cart is empty</p>
+            </div>
+            
+            <div id="cart-items" class="cart-items"></div>
+            
+            <div id="cart-total" class="cart-total">
+                <div class="cart-total-row">
+                    <span>Total:</span>
+                    <span id="cart-total-amount">$0.00</span>
+                </div>
+                <button class="button button--primary cart-checkout">
+                    <i class="fa-solid fa-credit-card"></i> Checkout
+                </button>
+                <button class="button cart-clear" onclick="clearCart()">
+                    <i class="fa-solid fa-trash"></i> Clear Cart
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
 </body>
 </html>
