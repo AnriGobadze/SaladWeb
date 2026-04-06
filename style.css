@@ -683,35 +683,97 @@ body {
     flex: 1 1 auto;
 }
 
+/* ADD THIS UPDATED CSS IN ITS PLACE: */
+
+/* The main footer is still a flex container */
 .menu__card-footer {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-top: auto;
+    gap: 12px;          /* consistent spacing between items */
+    margin-top: auto;   /* push footer to bottom of card */
+    padding-top: 8px;
 }
 
+/* Price sits at the left; no weird auto-margins fighting cascade */
 .menu__card-price {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--text-dark);
+    margin: 0;          /* keep it tight and predictable */
+    white-space: nowrap;/* avoid wrapping price */
 }
 
+/* Force the remaining controls to the right */
+.menu__card-footer .controls {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Quantity container (compact, vertically centered) */
+.menu__card-quantity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #f1f2f6;
+    border-radius: 8px;
+    padding: 4px;       /* slightly larger hit area */
+}
+
+/* Quantity buttons: consistent rectangular shape */
+.quantity-btn {
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.12s, color 0.12s, transform 0.08s;
+}
+.quantity-btn:active { transform: scale(0.98); }
+
+.quantity-btn:hover {
+    background-color: #212529;
+    color: #fff;
+}
+
+/* Quantity text */
+.quantity-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: #212529;
+    padding: 0 8px;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Action button: wider, not square, keeps text centered */
 .menu__card-action {
     background-color: var(--accent-green-light);
     color: var(--accent-green-dark);
     border: none;
     border-radius: 10px;
-    padding: 10px 15px;
+    padding: 10px 14px;    /* wider padding so text has room */
     font-weight: 600;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
+    font-size: 14px;       /* readable size */
+    min-width: 110px;      /* prevents squareness */
+    justify-content: center;
+    white-space: nowrap;
+    transition: background-color 0.18s ease, transform 0.12s ease;
 }
-
-.menu__card-action:hover { background-color: #cce8d6; }
+.menu__card-action:hover { background-color: #cce8d0; transform: translateY(-2px); }
 
 .menu__explore {
     text-align: center;
@@ -1127,12 +1189,58 @@ body {
     padding: 15px;
 }
 
+
+
+/* Make the inline "buttons" look subtle — like links but accessible */
+.cart-clear .confirm-yes,
+.cart-clear .confirm-cancel {
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  display: inline-block;
+}
+
+/* Yes = destructive (red-ish) but compact */
+.cart-clear .confirm-yes {
+  background: linear-gradient(135deg,#ef5350,#d32f2f);
+  color: #fff;
+  font-size: 13px;
+}
+
+/* Cancel = neutral */
+.cart-clear .confirm-cancel {
+  background: transparent;
+  color: inherit;
+  border: 1px solid rgba(0,0,0,0.06);
+  font-size: 13px;
+}
+
+/* Focus styles for keyboard users */
+.cart-clear .confirm-yes:focus,
+.cart-clear .confirm-cancel:focus {
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+}
+
+
 .cart-clear {
-    width: 100%;
-    background: #f5f5f5;
+    display: inline-flex;           /* center contents */
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;                    /* match checkout's full width */
+    height: auto;                   /* height determined by padding like checkout */
+    padding: 12px;                  /* same as .cart-checkout */
+    font-size: 16px;                /* same as .cart-checkout */
+    font-weight: 600;               /* same as .cart-checkout */
+    border-radius: 10px;            /* same as checkout */
+    background: #f5f5f5;            /* you can switch to gradient if needed */
     color: #666;
-    font-size: 14px;
-    padding: 12px;
+    cursor: pointer;
+    text-align: center;
+    box-sizing: border-box;
+    border: none;
 }
 
 .cart-clear:hover {
@@ -1169,31 +1277,8 @@ body {
     font-weight: 700 !important;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-        transform: scale(1);
-    }
-    to {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-}
 
-.menu__card {
-    animation: fadeInUp 0.5s ease forwards;
-}
 
 .menu__explore .button {
     position: relative;

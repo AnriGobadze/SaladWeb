@@ -1,6 +1,43 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     gsap.registerPlugin(ScrollTrigger);
+    const heroContent = document.querySelector('.hero__content');
+if (heroContent) {
+  // Step 1: container slides in
+  gsap.from(heroContent, {
+    x: -180,
+    opacity: 0,
+    duration: 0.8,
+    ease: 'power3.out',
+    delay: 0.08
+  });
+
+  // Step 2: stagger all children except hero__title
+  const childrenExceptTitle = Array.from(heroContent.children).filter(
+    el => !el.classList.contains('hero__title')
+  );
+
+  gsap.from(childrenExceptTitle, {
+    y: 10,
+    opacity: 0,
+    duration: 0.45,
+    ease: 'power2.out',
+    stagger: 0.08,
+    delay: 0.32
+  });
+
+  // Step 3: hero__title comes later
+const heroTitle = heroContent.querySelector('.hero__title');
+if (heroTitle) {
+  gsap.from(heroTitle, {
+    x: -400,        // slide in from left
+    duration: 1, // slightly longer feels smooth
+    ease: 'power3.out',
+    delay: 0.32 + 0.4 // 0.4s after the other children
+  });
+}
+}
+
 
     // =================== CART ===================
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -22,18 +59,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Add item to cart function
-    function addToCart(name, price, quantity=1) {
-        const existingItem = cart.find(item => item.name === name);
-        if(existingItem){
-            existingItem.quantity += quantity;
-        } else {
-            cart.push({name, price, quantity});
-        }
-        updateCartBadge();
-        localStorage.setItem('cart', JSON.stringify(cart));
-        showFullScreenToast(`${quantity} x ${name} added to cart!`);
-        animateCartItem(name, price, quantity);
+// Add item to cart function (no fullscreen toast on add)
+function addToCart(name, price, quantity = 1) {
+    const existingItem = cart.find(item => item.name === name);
+    if (existingItem) {
+        existingItem.quantity += quantity;
+    } else {
+        cart.push({ name, price, quantity });
     }
+
+    updateCartBadge();
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    // Keep the small inline/cart-area feedback (flying item + badge animation)
+    animateCartItem(name, price, quantity);
+
+    // -- removed showFullScreenToast here so no big center message appears on add --
+}
+
 
     // Animate new cart item flying from hero/menu
     function animateCartItem(name, price, quantity){
@@ -79,16 +122,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Menu section add to cart buttons
-    document.querySelectorAll('.menu__card-action').forEach(button => {
-        button.addEventListener('click', ()=>{
-            const card = button.closest('.menu__card');
-            const itemName = card.querySelector('.menu__card-title').textContent;
-            const itemPriceText = card.querySelector('.menu__card-price').textContent;
-            const itemPrice = parseFloat(itemPriceText.replace('$',''));
-            addToCart(itemName, itemPrice, 1);
-        });
+document.querySelectorAll('.menu__card-action').forEach(button => {
+    button.addEventListener('click', () => {
+        const card = button.closest('.menu__card');
+        const itemName = card.querySelector('.menu__card-title').textContent;
+        const itemPriceText = card.querySelector('.menu__card-price').textContent;
+        const itemPrice = parseFloat(itemPriceText.replace('$', ''));
+
+        // get quantity if available, otherwise default to 1
+        const quantityEl = card.querySelector('.quantity-value');
+        const quantity = quantityEl ? parseInt(quantityEl.textContent, 10) : 1;
+
+        addToCart(itemName, itemPrice, quantity);
     });
+});
 
     // =================== CART MODAL ===================
     const body = document.body;
@@ -132,14 +179,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const div = document.createElement('div');
             div.className='cart-item';
             div.innerHTML=`
-                <div class="cart-item-info">
-                    <h4>${item.name}</h4>
-                    <p>${item.price.toFixed(2)} × ${item.quantity}</p>
-                </div>
-                <div class="cart-item-actions">
-                    <span class="cart-item-total">$${itemTotal.toFixed(2)}</span>
-                    <button class="cart-item-remove" data-index="${index}"><i class="fa-solid fa-trash"></i></button>
-                </div>
+    <div class="cart-item-info">
+        <h4>${item.name}</h4>
+        <div class="cart-item-quantity">
+            <button class="quantity-btn quantity-decrease" data-index="${index}" aria-label="Decrease quantity">-</button>
+            <span class="quantity-value">${item.quantity}</span>
+            <button class="quantity-btn quantity-increase" data-index="${index}" aria-label="Increase quantity">+</button>
+        </div>
+    </div>
+    <div class="cart-item-actions">
+        <span class="cart-item-total">$${itemTotal.toFixed(2)}</span>
+        <button class="cart-item-remove" data-index="${index}"><i class="fa-solid fa-trash"></i></button>
+    </div>
             `;
             cartItemsContainer.appendChild(div);
         });
@@ -155,7 +206,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderCartItems();
             });
         });
+
+        // (Add this inside renderCartItems, after the .cart-item-remove listener)
+
+document.querySelectorAll('.cart-item-quantity .quantity-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+        const index = parseInt(e.currentTarget.dataset.index);
+        
+        if (e.currentTarget.classList.contains('quantity-increase')) {
+            cart[index].quantity++;
+        } else if (e.currentTarget.classList.contains('quantity-decrease')) {
+            cart[index].quantity--;
+        }
+        
+        // If quantity drops to 0 or below, remove the item
+        if (cart[index].quantity <= 0) {
+            cart.splice(index, 1);
+        }
+        
+        // Update everything
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartBadge();
+        renderCartItems(); // Re-render the cart to show changes
+    });
+});
     };
+
 
     // Show cart modal on icon click
     const cartIcon = document.querySelector('.site-header__cart');
@@ -178,15 +254,88 @@ document.addEventListener('DOMContentLoaded', () => {
         hideCartModal();
     });
 
-    // Clear cart
-    window.clearCart = () => {
-        if(cart.length > 0 && confirm('Are you sure you want to clear your cart?')){
-            cart = [];
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartBadge();
-            renderCartItems();
-        }
-    };
+// Replace existing clearCart with this compact inline-confirmation version
+window.clearCart = () => {
+  const clearBtn = document.querySelector('.cart-clear');
+  if (!clearBtn) return;
+
+  // If cart is empty, do nothing (or show small badge toast if you want)
+  if (!cart || cart.length === 0) return;
+
+  // If already in confirming state, ignore extra clicks
+  if (clearBtn.dataset.confirming === 'true') return;
+
+  // Save original content so we can restore it exactly
+  clearBtn.dataset.originalHtml = clearBtn.innerHTML;
+  clearBtn.dataset.confirming = 'true';
+
+  // Replace button content with inline confirmation. Keep it compact.
+  clearBtn.innerHTML = `Are you sure? <span class="confirm-yes" role="button" tabindex="0">Yes</span> <span class="confirm-cancel" role="button" tabindex="0">Cancel</span>`;
+
+  // Small helper to restore original state
+  let autoCancelTimer = null;
+  function restore() {
+    if (autoCancelTimer) clearTimeout(autoCancelTimer);
+    clearBtn.innerHTML = clearBtn.dataset.originalHtml || 'Clear Cart';
+    delete clearBtn.dataset.originalHtml;
+    delete clearBtn.dataset.confirming;
+    // remove the temporary handlers (we attached them to the button)
+    clearBtn.removeEventListener('click', onBtnClick);
+    clearBtn.removeEventListener('keydown', onBtnKeydown);
+  }
+
+  // Action when user confirms
+  function confirmYes() {
+    cart = [];
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartBadge();
+    renderCartItems();
+    restore();
+
+    // small UI feedback — keep subtle: animate badge or small toast near cart
+    // animateCartItem('Cart cleared', 0, 0); // optional
+  }
+
+  // Click handler checks which inline element was clicked
+  function onBtnClick(e) {
+    const target = e.target;
+    if (target.classList.contains('confirm-yes')) {
+      confirmYes();
+    } else if (target.classList.contains('confirm-cancel')) {
+      restore();
+    }
+  }
+
+  // Keyboard handler: allow Enter/Space on the inline "buttons"
+  function onBtnKeydown(e) {
+    // Only act if focus is on one of the inline spans
+    const target = e.target;
+    if (!target.classList) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      if (target.classList.contains('confirm-yes')) {
+        e.preventDefault();
+        confirmYes();
+      } else if (target.classList.contains('confirm-cancel')) {
+        e.preventDefault();
+        restore();
+      }
+    }
+    // Escape to cancel
+    if (e.key === 'Escape') {
+      restore();
+    }
+  }
+
+  // Attach handlers to the button (delegation inside the button)
+  clearBtn.addEventListener('click', onBtnClick);
+  clearBtn.addEventListener('keydown', onBtnKeydown);
+
+  // Auto-cancel after 6 seconds for safety
+  autoCancelTimer = setTimeout(() => {
+    restore();
+  }, 6000);
+};
+
 
     // =================== QUANTITY BUTTONS ===================
     document.querySelector('.quantity__decrease')?.addEventListener('click', ()=>{
@@ -230,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
     heroImages.forEach(image => {
         imageCarouselTimeline
             .to(image, { x: 0, opacity: 1, duration: 1.2, ease: 'power3.out' })
-            .to(image, { x: 300, opacity: 0, duration: 1.2, ease: 'power3.in' }, "+=3");
+            .to(image, { x: 300, opacity: 0, duration: 1.2, ease: 'power3.in' }, "+=1");
     });
 
     ScrollTrigger.create({
@@ -310,22 +459,90 @@ document.addEventListener('DOMContentLoaded', () => {
                 const shouldBeVisible = filterValue === 'all' || filterValue === cardCategory;
                 
                 // Check if the card's visibility needs to change
-                const isCurrentlyVisible = card.style.display !== 'none';
+// ADD this code in its place:
+// ADD this code in its place:
 
-                if (shouldBeVisible && !isCurrentlyVisible) {
-                    // Make it visible with a fade-in animation
-                    card.style.display = 'flex'; // Use 'flex' since cards are flex containers
-                    card.style.animation = 'fadeInUp 0.5s ease forwards';
-                } else if (!shouldBeVisible && isCurrentlyVisible) {
-                    // Hide it with a fade-out animation
-                    card.style.animation = 'fadeOut 0.4s ease forwards';
-                    // After the animation, set display to none
-                    setTimeout(() => {
-                        card.style.display = 'none';
-                    }, 400); // Must match animation duration
-                }
+// Arrays to hold the cards we need to animate
+const cardsToHide = [];
+const cardsToShow = [];
+
+// First, determine which cards to hide and which to show
+menuCards.forEach(card => {
+    const cardCategory = card.getAttribute('data-category');
+    const isVisible = card.style.display !== 'none';
+    const shouldBeVisible = filterValue === 'all' || filterValue === cardCategory;
+
+    if (isVisible && !shouldBeVisible) {
+        cardsToHide.push(card);
+    } else if (!isVisible && shouldBeVisible) {
+        cardsToShow.push(card);
+    }
+});
+
+// Create a GSAP timeline for a controlled animation sequence
+const tl = gsap.timeline();
+
+// 1. Animate out the cards that need to be hidden
+if (cardsToHide.length > 0) {
+    tl.to(cardsToHide, {
+        duration: 0.2, // Quick animation out
+        opacity: 0,
+        scale: 0.9,
+        ease: 'power1.in',
+        onComplete: () => {
+            // Set display to none after animation is complete
+            gsap.set(cardsToHide, { display: 'none' });
+        }
+    });
+}
+// 2. Animate in the new cards smoothly
+if (cardsToShow.length > 0) {
+    // Prepare cards for animation
+    tl.set(cardsToShow, {
+        display: 'flex',   // Ensure the card is visible
+        opacity: 0,        // Start fully transparent
+        scale: 0.95        // Slightly smaller for smooth pop-in
+    });
+
+    // Animate cards to final state
+    tl.to(cardsToShow, {
+        duration: 0.4,     // Slightly longer for smoother motion
+        opacity: 1,        // Fade in
+        scale: 1,          // Scale to normal
+        ease: 'power2.out', // Smooth easing
+        stagger: 0.1       // Sequential appearance with gentle delay
+    });
+}
+
             });
         });
     });
+
+
+
+
+
+
+    // ======================================================= //
+// ===== NEW: MENU CARD QUANTITY SELECTOR FUNCTIONALITY ==== //
+// ======================================================= //
+
+document.querySelectorAll('.menu__card-quantity').forEach(quantityContainer => {
+    const decreaseBtn = quantityContainer.querySelector('.quantity-decrease');
+    const increaseBtn = quantityContainer.querySelector('.quantity-increase');
+    const valueEl = quantityContainer.querySelector('.quantity-value');
+
+    decreaseBtn.addEventListener('click', () => {
+        let currentValue = parseInt(valueEl.textContent);
+        if (currentValue > 1) {
+            valueEl.textContent = currentValue - 1;
+        }
+    });
+
+    increaseBtn.addEventListener('click', () => {
+        let currentValue = parseInt(valueEl.textContent);
+        valueEl.textContent = currentValue + 1;
+    });
+});
 
 }); // DOMContentLoaded end
