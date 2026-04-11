@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.registerPlugin(ScrollTrigger);
     const heroContent = document.querySelector('.hero__content');
 if (heroContent) {
-  // Step 1: container slides in
   gsap.from(heroContent, {
     x: -180,
     opacity: 0,
@@ -12,7 +11,6 @@ if (heroContent) {
     delay: 0.08
   });
 
-  // Step 2: stagger all children except hero__title
   const childrenExceptTitle = Array.from(heroContent.children).filter(
     el => !el.classList.contains('hero__title')
   );
@@ -26,14 +24,13 @@ if (heroContent) {
     delay: 0.32
   });
 
-  // Step 3: hero__title comes later
 const heroTitle = heroContent.querySelector('.hero__title');
 if (heroTitle) {
   gsap.from(heroTitle, {
-    x: -400,        // slide in from left
-    duration: 1, // slightly longer feels smooth
+    x: -400,       
+    duration: 1,
     ease: 'power3.out',
-    delay: 0.32 + 0.4 // 0.4s after the other children
+    delay: 0.32 + 0.4
   });
 }
 }
@@ -43,7 +40,6 @@ if (heroTitle) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     updateCartBadge();
 
-    // Full-screen animated "Added to Cart" popup
     function showFullScreenToast(message) {
         let toast = document.createElement('div');
         toast.className = 'fullscreen-toast';
@@ -57,9 +53,6 @@ if (heroTitle) {
             }});
         }, 2000);
     }
-
-    // Add item to cart function
-// Add item to cart function (no fullscreen toast on add)
 function addToCart(name, price, quantity = 1) {
     const existingItem = cart.find(item => item.name === name);
     if (existingItem) {
@@ -71,14 +64,9 @@ function addToCart(name, price, quantity = 1) {
     updateCartBadge();
     localStorage.setItem('cart', JSON.stringify(cart));
 
-    // Keep the small inline/cart-area feedback (flying item + badge animation)
     animateCartItem(name, price, quantity);
 
-    // -- removed showFullScreenToast here so no big center message appears on add --
 }
-
-
-    // Animate new cart item flying from hero/menu
     function animateCartItem(name, price, quantity){
         const animationDiv = document.createElement('div');
         animationDiv.className = 'animated-cart-item';
@@ -92,7 +80,6 @@ function addToCart(name, price, quantity = 1) {
         );
     }
 
-    // Update cart badge
     function updateCartBadge(){
         const cartBadge = document.querySelector('.site-header__cart-badge');
         const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -109,7 +96,6 @@ function addToCart(name, price, quantity = 1) {
         }
     }
 
-    // Hero section order button
     const heroOrderBtn = document.querySelector('.hero__order');
     if(heroOrderBtn){
         heroOrderBtn.addEventListener('click', ()=>{
@@ -207,7 +193,6 @@ document.querySelectorAll('.menu__card-action').forEach(button => {
             });
         });
 
-        // (Add this inside renderCartItems, after the .cart-item-remove listener)
 
 document.querySelectorAll('.cart-item-quantity .quantity-btn').forEach(btn => {
     btn.addEventListener('click', e => {
@@ -219,72 +204,56 @@ document.querySelectorAll('.cart-item-quantity .quantity-btn').forEach(btn => {
             cart[index].quantity--;
         }
         
-        // If quantity drops to 0 or below, remove the item
         if (cart[index].quantity <= 0) {
             cart.splice(index, 1);
         }
         
-        // Update everything
         localStorage.setItem('cart', JSON.stringify(cart));
         updateCartBadge();
-        renderCartItems(); // Re-render the cart to show changes
+        renderCartItems();
     });
 });
     };
 
 
-    // Show cart modal on icon click
     const cartIcon = document.querySelector('.site-header__cart');
     if(cartIcon) cartIcon.addEventListener('click', showCartModal);
 
-    // Hide modal on background click
     document.getElementById('cart-modal')?.addEventListener('click', e=>{
         if(e.target.id==='cart-modal') hideCartModal();
     });
     window.hideCartModal = hideCartModal;
-
-    // Checkout button logic
     document.querySelector('.cart-checkout')?.addEventListener('click', ()=>{
         if(cart.length === 0){
             showFullScreenToast('Your cart is empty!');
             return;
         }
-        // For demonstration. In a real app, this would lead to a checkout page.
         showFullScreenToast('Redirecting to checkout!');
         hideCartModal();
     });
 
-// Replace existing clearCart with this compact inline-confirmation version
 window.clearCart = () => {
   const clearBtn = document.querySelector('.cart-clear');
   if (!clearBtn) return;
 
-  // If cart is empty, do nothing (or show small badge toast if you want)
   if (!cart || cart.length === 0) return;
 
-  // If already in confirming state, ignore extra clicks
   if (clearBtn.dataset.confirming === 'true') return;
 
-  // Save original content so we can restore it exactly
   clearBtn.dataset.originalHtml = clearBtn.innerHTML;
   clearBtn.dataset.confirming = 'true';
-
-  // Replace button content with inline confirmation. Keep it compact.
   clearBtn.innerHTML = `Are you sure? <span class="confirm-yes" role="button" tabindex="0">Yes</span> <span class="confirm-cancel" role="button" tabindex="0">Cancel</span>`;
 
-  // Small helper to restore original state
   let autoCancelTimer = null;
   function restore() {
     if (autoCancelTimer) clearTimeout(autoCancelTimer);
     clearBtn.innerHTML = clearBtn.dataset.originalHtml || 'Clear Cart';
     delete clearBtn.dataset.originalHtml;
     delete clearBtn.dataset.confirming;
-    // remove the temporary handlers (we attached them to the button)
     clearBtn.removeEventListener('click', onBtnClick);
     clearBtn.removeEventListener('keydown', onBtnKeydown);
   }
 
-  // Action when user confirms
   function confirmYes() {
     cart = [];
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -292,11 +261,8 @@ window.clearCart = () => {
     renderCartItems();
     restore();
 
-    // small UI feedback — keep subtle: animate badge or small toast near cart
-    // animateCartItem('Cart cleared', 0, 0); // optional
   }
 
-  // Click handler checks which inline element was clicked
   function onBtnClick(e) {
     const target = e.target;
     if (target.classList.contains('confirm-yes')) {
@@ -306,9 +272,7 @@ window.clearCart = () => {
     }
   }
 
-  // Keyboard handler: allow Enter/Space on the inline "buttons"
   function onBtnKeydown(e) {
-    // Only act if focus is on one of the inline spans
     const target = e.target;
     if (!target.classList) return;
     if (e.key === 'Enter' || e.key === ' ') {
@@ -320,17 +284,13 @@ window.clearCart = () => {
         restore();
       }
     }
-    // Escape to cancel
     if (e.key === 'Escape') {
       restore();
     }
   }
 
-  // Attach handlers to the button (delegation inside the button)
   clearBtn.addEventListener('click', onBtnClick);
   clearBtn.addEventListener('keydown', onBtnKeydown);
-
-  // Auto-cancel after 6 seconds for safety
   autoCancelTimer = setTimeout(() => {
     restore();
   }, 6000);
@@ -359,7 +319,6 @@ window.clearCart = () => {
     burgerMenu.addEventListener('click', () => {
         burgerMenu.classList.toggle('active');
         mobileNavOverlay.classList.toggle('active');
-        // Prevent body scrolling when mobile nav is open
         document.body.style.overflow = mobileNavOverlay.classList.contains('active') ? 'hidden' : '';
     });
     
@@ -381,6 +340,16 @@ window.clearCart = () => {
             .to(image, { x: 0, opacity: 1, duration: 1.2, ease: 'power3.out' })
             .to(image, { x: 300, opacity: 0, duration: 1.2, ease: 'power3.in' }, "+=1");
     });
+
+    gsap.to('.hero__image', {
+    scale: 1.1,
+    rotation: 1,
+    duration: 12,
+    repeat: -1,   
+    yoyo: true,  
+    ease: "sine.inOut",
+    stagger: 2    
+});
 
     ScrollTrigger.create({
         trigger: '.hero',
@@ -414,27 +383,27 @@ window.clearCart = () => {
     // ===== NEW: CONTACT LINK SMOOTH SCROLL FUNCTIONALITY ===== //
     // ======================================================= //
     
-    document.querySelectorAll('.nav-contact-link').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault(); // Stop the default anchor link behavior
+document.querySelectorAll('.site-nav a, .mobile-nav a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
 
-            const targetId = this.getAttribute('href'); // Get the href value (e.g., "#contact-section")
-            const targetElement = document.querySelector(targetId);
+        const targetId = this.getAttribute('href');
+        if (!targetId || targetId === '#') return; 
 
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth', // This creates the smooth scroll effect
-                    block: 'start'
-                });
-            }
+        const targetElement = document.querySelector(targetId);
 
-            // If the mobile navigation is open, close it
-            if (mobileNavOverlay.classList.contains('active')) {
-                closeMobileNav();
-            }
-        });
+        if (targetElement) {
+            targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        if (mobileNavOverlay.classList.contains('active')) {
+            closeMobileNav();
+        }
     });
-
+});
 
     // ================================================== //
     // ===== NEW: SALAD MENU FILTERING FUNCTIONALITY ===== //
@@ -447,26 +416,17 @@ window.clearCart = () => {
         item.addEventListener('click', function(e) {
             e.preventDefault();
 
-            // 1. Update active state for the clicked filter button
             filterItems.forEach(i => i.classList.remove('menu__filter-item--active'));
             this.classList.add('menu__filter-item--active');
 
             const filterValue = this.getAttribute('data-filter');
-
-            // 2. Filter the cards with animation
             menuCards.forEach(card => {
                 const cardCategory = card.getAttribute('data-category');
                 const shouldBeVisible = filterValue === 'all' || filterValue === cardCategory;
-                
-                // Check if the card's visibility needs to change
-// ADD this code in its place:
-// ADD this code in its place:
 
-// Arrays to hold the cards we need to animate
 const cardsToHide = [];
 const cardsToShow = [];
 
-// First, determine which cards to hide and which to show
 menuCards.forEach(card => {
     const cardCategory = card.getAttribute('data-category');
     const isVisible = card.style.display !== 'none';
@@ -479,38 +439,32 @@ menuCards.forEach(card => {
     }
 });
 
-// Create a GSAP timeline for a controlled animation sequence
 const tl = gsap.timeline();
 
-// 1. Animate out the cards that need to be hidden
 if (cardsToHide.length > 0) {
     tl.to(cardsToHide, {
-        duration: 0.2, // Quick animation out
+        duration: 0.2, 
         opacity: 0,
         scale: 0.9,
         ease: 'power1.in',
         onComplete: () => {
-            // Set display to none after animation is complete
             gsap.set(cardsToHide, { display: 'none' });
         }
     });
 }
-// 2. Animate in the new cards smoothly
 if (cardsToShow.length > 0) {
-    // Prepare cards for animation
     tl.set(cardsToShow, {
-        display: 'flex',   // Ensure the card is visible
-        opacity: 0,        // Start fully transparent
-        scale: 0.95        // Slightly smaller for smooth pop-in
+        display: 'flex',  
+        opacity: 0,        
+        scale: 0.95        
     });
 
-    // Animate cards to final state
     tl.to(cardsToShow, {
-        duration: 0.4,     // Slightly longer for smoother motion
-        opacity: 1,        // Fade in
-        scale: 1,          // Scale to normal
-        ease: 'power2.out', // Smooth easing
-        stagger: 0.1       // Sequential appearance with gentle delay
+        duration: 0.4,     
+        opacity: 1,        
+        scale: 1,         
+        ease: 'power2.out',
+        stagger: 0.1       
     });
 }
 
@@ -545,4 +499,4 @@ document.querySelectorAll('.menu__card-quantity').forEach(quantityContainer => {
     });
 });
 
-}); // DOMContentLoaded end
+}); 
